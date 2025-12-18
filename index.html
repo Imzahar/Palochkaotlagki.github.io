@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Палочка отладки</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        h1 i {
+            color: #ffcc00;
+            animation: pulse 2s infinite;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ====================== */
+        /* НАСТРОЙКИ СОРТИРОВКИ */
+        /* ====================== */
+        /* 
+          Для изменения порядка отображения кнопок измените значения order в классах ниже.
+          
+          Примеры сортировки:
+          
+          1. Сортировка по номеру (по умолчанию):
+            .btn-test-1 { order: 1; }
+            .btn-test-2 { order: 2; }
+            ... и т.д.
+          
+          2. Сортировка по убыванию:
+            .btn-test-1 { order: 15; }
+            .btn-test-2 { order: 14; }
+            ... и т.д.
+          
+          3. Случайный порядок:
+            .btn-test-1 { order: 7; }
+            .btn-test-2 { order: 3; }
+            .btn-test-3 { order: 12; }
+            ... и т.д.
+          
+          Аналогично для кнопок скачивания.
+          
+          Значение order работает в контейнере с display: flex или grid.
+          Элементы с меньшим значением order отображаются раньше.
+        */
+        
+        /* Текущая настройка: сортировка по возрастанию (1,2,3...) */
+        .btn-test-1 { order: 1; }
+        .btn-test-2 { order: 2; }
+        .btn-test-3 { order: 3; }
+        .btn-test-4 { order: 4; }
+        .btn-test-5 { order: 5; }
+        .btn-test-6 { order: 6; }
+        .btn-test-7 { order: 7; }
+        .btn-test-8 { order: 8; }
+        .btn-test-9 { order: 9; }
+        .btn-test-10 { order: 10; }
+        .btn-test-11 { order: 11; }
+        .btn-test-12 { order: 12; }
+        .btn-test-13 { order: 13; }
+        .btn-test-14 { order: 14; }
+        .btn-test-15 { order: 15; }
+        
+        /* Кнопки скачивания - текущая настройка: по возрастанию */
+        .btn-download-1 { order: 1; }
+        .btn-download-2 { order: 2; }
+        .btn-download-3 { order: 3; }
+        .btn-download-4 { order: 4; }
+        .btn-download-5 { order: 5; }
+        .btn-download-6 { order: 6; }
+        .btn-download-7 { order: 7; }
+        .btn-download-8 { order: 8; }
+        .btn-download-9 { order: 9; }
+        .btn-download-10 { order: 10; }
+        /* ====================== */
+
+        .sections-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #ffcc00;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        /* Для сортировки с помощью order требуется flex-контейнер */
+        .buttons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            flex: 1 0 calc(20% - 15px); /* 5 кнопок в ряд на больших экранах */
+            min-width: 130px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-test {
+            background: linear-gradient(45deg, #8e2de2, #4a00e0);
+        }
+
+        .btn-test:hover {
+            background: linear-gradient(45deg, #9d3df0, #5a10f0);
+        }
+
+        .btn-download {
+            background: linear-gradient(45deg, #00b09b, #96c93d);
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(45deg, #00c9a7, #a6d946);
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-box h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box h2 i {
+            color: #ffcc00;
+        }
+
+        .info-box p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            min-width: 150px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffcc00;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 1024px) {
+            .btn {
+                flex: 1 0 calc(25% - 15px); /* 4 кнопки в ряд */
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .sections-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                flex: 1 0 calc(33.333% - 15px); /* 3 кнопки в ряд */
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                flex: 1 0 calc(50% - 15px); /* 2 кнопки в ряд */
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .btn {
+                flex: 1 0 100%; /* 1 кнопка в ряд */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-magic"></i> Палочка отладки</h1>
+            <p class="subtitle">Инструмент для тестирования и отладки ваших проектов. Нажмите на любую кнопку для перехода на Google.com с соответствующим запросом или скачайте дополнительные материалы для работы.</p>
+        </header>
+
+        <div class="sections-container">
+            <section class="section">
+                <h2 class="section-title"><i class="fas fa-vial"></i> Тестовые кнопки</h2>
+                <div class="buttons-grid">
+                    <!-- 
+                    ======================
+                    КНОПКИ ТЕСТИРОВАНИЯ
+                    ======================
+                    Для изменения порядка сортировки измените значения order 
+                    в CSS для соответствующих классов (.btn-test-1, .btn-test-2, ...)
+                    -->
+                    <a href="https://www.google.com/search?q=Тест+15" target="_blank" class="btn btn-test btn-test-15">
+                        <i class="fas fa-play"></i> Тест 15
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+14" target="_blank" class="btn btn-test btn-test-14">
+                        <i class="fas fa-play"></i> Тест 14
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+13" target="_blank" class="btn btn-test btn-test-13">
+                        <i class="fas fa-play"></i> Тест 13
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+12" target="_blank" class="btn btn-test btn-test-12">
+                        <i class="fas fa-play"></i> Тест 12
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+11" target="_blank" class="btn btn-test btn-test-11">
+                        <i class="fas fa-play"></i> Тест 11
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+10" target="_blank" class="btn btn-test btn-test-10">
+                        <i class="fas fa-play"></i> Тест 10
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+9" target="_blank" class="btn btn-test btn-test-9">
+                        <i class="fas fa-play"></i> Тест 9
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+8" target="_blank" class="btn btn-test btn-test-8">
+                        <i class="fas fa-play"></i> Тест 8
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+7" target="_blank" class="btn btn-test btn-test-7">
+                        <i class="fas fa-play"></i> Тест 7
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+6" target="_blank" class="btn btn-test btn-test-6">
+                        <i class="fas fa-play"></i> Тест 6
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+5" target="_blank" class="btn btn-test btn-test-5">
+                        <i class="fas fa-play"></i> Тест 5
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+4" target="_blank" class="btn btn-test btn-test-4">
+                        <i class="fas fa-play"></i> Тест 4
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+3" target="_blank" class="btn btn-test btn-test-3">
+                        <i class="fas fa-play"></i> Тест 3
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+2" target="_blank" class="btn btn-test btn-test-2">
+                        <i class="fas fa-play"></i> Тест 2
+                    </a>
+                    <a href="https://www.google.com/search?q=Тест+1" target="_blank" class="btn btn-test btn-test-1">
+                        <i class="fas fa-play"></i> Тест 1
+                    </a>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><i class="fas fa-download"></i> Кнопки скачивания</h2>
+                <div class="buttons-grid">
+                    <!-- 
+                    ======================
+                    КНОПКИ СКАЧИВАНИЯ
+                    ======================
+                    Для изменения порядка сортировки измените значения order 
+                    в CSS для соответствующих классов (.btn-download-1, .btn-download-2, ...)
+                    -->
+                    <a href="https://www.google.com/search?q=Скачать+10" target="_blank" class="btn btn-download btn-download-10">
+                        <i class="fas fa-download"></i> Скачать 10
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+9" target="_blank" class="btn btn-download btn-download-9">
+                        <i class="fas fa-download"></i> Скачать 9
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+8" target="_blank" class="btn btn-download btn-download-8">
+                        <i class="fas fa-download"></i> Скачать 8
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+7" target="_blank" class="btn btn-download btn-download-7">
+                        <i class="fas fa-download"></i> Скачать 7
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+6" target="_blank" class="btn btn-download btn-download-6">
+                        <i class="fas fa-download"></i> Скачать 6
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+5" target="_blank" class="btn btn-download btn-download-5">
+                        <i class="fas fa-download"></i> Скачать 5
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+4" target="_blank" class="btn btn-download btn-download-4">
+                        <i class="fas fa-download"></i> Скачать 4
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+3" target="_blank" class="btn btn-download btn-download-3">
+                        <i class="fas fa-download"></i> Скачать 3
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+2" target="_blank" class="btn btn-download btn-download-2">
+                        <i class="fas fa-download"></i> Скачать 2
+                    </a>
+                    <a href="https://www.google.com/search?q=Скачать+1" target="_blank" class="btn btn-download btn-download-1">
+                        <i class="fas fa-download"></i> Скачать 1
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <div class="info-box">
+            <h2><i class="fas fa-info-circle"></i> О "Палочке отладки"</h2>
+            <p>Данный инструмент предназначен для быстрого доступа к тестовым функциям и загрузке необходимых ресурсов. Все кнопки ведут на Google.com с соответствующими поисковыми запросами.</p>
+            <p>Используйте тестовые кнопки для проверки различных сценариев, а кнопки скачивания — для получения дополнительных материалов по работе с инструментом.</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value">15</span>
+                    <span class="stat-label">Тестовых функций</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">10</span>
+                    <span class="stat-label">Ресурсов для скачивания</span>
+                </div>
+                <div class="stat-value">100%</span>
+                    <span class="stat-label">Доступность</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">24/7</span>
+                    <span class="stat-label">Рабочее время</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <h3><i class="fas fa-sort"></i> Как изменить сортировку кнопок</h3>
+                <p>Для изменения порядка отображения кнопок найдите в CSS раздел "НАСТРОЙКИ СОРТИРОВКИ" и измените значения свойства "order" для соответствующих классов (.btn-test-1, .btn-test-2, ... и .btn-download-1, .btn-download-2, ...).</p>
+                <p>Элементы с меньшим значением order отображаются раньше. Текущая настройка: сортировка по возрастанию (от 1 к 15 и от 1 к 10).</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2023 Палочка отладки. Все кнопки ведут на Google.com. Инструмент для тестирования и отладки.</p>
+            <p>Сайт создан как демонстрация работы с градиентным дизайном, кнопками и CSS-сортировкой.</p>
+        </footer>
+    </div>
+</body>
+</html>
